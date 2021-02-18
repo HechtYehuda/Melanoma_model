@@ -1,0 +1,8 @@
+*.csv
+*.dcm
+*.jpg
+*.tfrec
+test/
+train/
+jpeg/
+tfrecords/
