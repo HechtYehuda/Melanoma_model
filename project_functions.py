@@ -12,7 +12,7 @@ def files_to_hist_df(files_list):
     green_array = np.zeros(256)
     red_array = np.zeros(256)
 
-    for file in files:
+    for file in files_list:
         img = cv2.imread(file, 3)
         # Calculate histograms
         blue = cv2.calcHist(img, channels=[0], mask=None, histSize=[256], ranges=[0,256]).flatten()
