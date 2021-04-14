@@ -29,3 +29,5 @@ def files_to_hist_df(files_list):
     blue_df = pd.DataFrame(blue_array).add_prefix('blue_')
     green_df = pd.DataFrame(green_array).add_prefix('green_')
     hist_df = pd.concat([red_df, blue_df, green_df], axis=1)
+
+    return hist_df
