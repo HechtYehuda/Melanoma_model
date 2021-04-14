@@ -1,3 +1,7 @@
+import pandas as pd
+import numpy as np
+import cv2
+
 # Files to hist df
 def files_to_hist_df(files_list):
     '''
