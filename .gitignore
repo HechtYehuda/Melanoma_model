@@ -6,3 +6,5 @@ test/
 train/
 jpeg/
 tfrecords/
+.ipynb_checkpoints
+*.pkl
