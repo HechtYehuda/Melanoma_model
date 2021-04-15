@@ -8,3 +8,4 @@ jpeg/
 tfrecords/
 .ipynb_checkpoints/
 __pycache__
+dask*/
