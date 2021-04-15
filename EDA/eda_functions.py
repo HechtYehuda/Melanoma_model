@@ -1,10 +1,9 @@
-import modin.pandas as pd
+import pandas as pd
 import numpy as np
 
 # Preprocessing
-def eda_preprocessing(dataframe):
-    client = Client()
-    df = pd.read_csv('../data/eda.csv', index_col=0)
+def eda_preprocessing(path):
+    df = pd.read_csv(path, index_col=0)
     
     meta = df.iloc[:,:8]
     blue = df.loc[:,df.columns.str.contains('blue')]
