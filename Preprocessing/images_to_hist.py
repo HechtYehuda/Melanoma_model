@@ -26,6 +26,6 @@ green = df.loc[:,'0':'255'].add_prefix('green_')
 df.loc[:,'512':'767'].rename(rename_2, axis=1, inplace=True)
 red = df.loc[:,'0':'255'].add_prefix('red_')
 
-df = pd.concat([df.iloc[:,0:9],blue,green,red], axis=1)
+df = pd.concat([df.iloc[:,0:8],blue,green,red], axis=1)
 
-df.to_csv('data/eda.csv')
+df.to_csv('../data/eda.csv')
