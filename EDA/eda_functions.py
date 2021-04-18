@@ -65,6 +65,7 @@ def eda_preprocessing(path):
 def anova_report(dataframe, grouping, comparison, aggregator):
     '''
     Prints F and P values of all three channels based on a grouping feature and comparision feature.
+    Thanks to @ayhan for his StackOverflow answer: https://stackoverflow.com/a/44066097/7287543
     '''
     for site in dataframe.groupby(grouping):
         blue_data = [i[1] for i in site[1].groupby(comparison)['blue_'+aggregator]]
