@@ -41,6 +41,15 @@ def eda_preprocessing(path):
     green_eda['green_kurtosis'] = green.kurt(axis=1)
     red_eda['red_kurtosis'] = red.kurt(axis=1)
 
+    # Mean, median features
+    blue_eda['blue_mean'] = blue.mean(axis=1)
+    green_eda['green_mean'] = green.mean(axis=1)
+    red_eda['red_mean'] = red.mean(axis=1)
+
+    blue_eda['blue_median'] = blue.median(axis=1)
+    green_eda['green_median'] = green.median(axis=1)
+    red_eda['red_median'] = red.median(axis=1)
+
     # Compile final dataframe
     contains_blue = blue_eda.columns.str.contains('|'.join([str(i) for i in range(256)]))
     blue_eda = blue_eda.drop(blue_eda.columns[contains_blue], axis=1)
