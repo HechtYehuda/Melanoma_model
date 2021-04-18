@@ -8,7 +8,17 @@ def eda_preprocessing(path):
     warnings.filterwarnings('ignore', category=SettingWithCopyWarning)
     df = pd.read_csv(path, index_col=0)
     
-    eda_df = df.iloc[:,:8]
+    meta_features = [
+            'image_name',
+            'patient_id',
+            'sex',
+            'age_approx',
+            'anatom_site_general_challenge',
+            'diagnosis',
+            'benign_malignant',
+            'target'
+            ]
+    eda_df = df.loc[:,meta_features]
     blue = df.loc[:,df.columns.str.contains('blue')]
     green = df.loc[:,df.columns.str.contains('green')]
     red = df.loc[:,df.columns.str.contains('red')]
