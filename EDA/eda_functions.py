@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from scipy import stats as ss
 import warnings
 from pandas.core.common import SettingWithCopyWarning
 
@@ -14,8 +15,6 @@ def eda_preprocessing(path):
             'sex',
             'age_approx',
             'anatom_site_general_challenge',
-            'diagnosis',
-            'benign_malignant',
             'target'
             ]
     eda_df = df.loc[:,meta_features]
@@ -73,3 +72,25 @@ def eda_preprocessing(path):
     eda_df = pd.concat([eda_df, blue_eda, green_eda, red_eda], axis=1)
 
     return eda_df
+
+# ANOVA report
+def anova_report(dataframe, grouping, comparison, aggregator):
+    '''
+    Prints F and P values of all three channels based on a grouping feature and comparision feature.
+    '''
+    for site in dataframe.groupby(grouping):
+        blue_data = [i[1] for i in site[1].groupby(comparison)['blue_'+aggregator]]
+        green_data = [i[1] for i in site[1].groupby(comparison)['green_'+aggregator]]
+        red_data = [i[1] for i in site[1].groupby(comparison)['red_'+aggregator]]
+        try:
+            f_blue, p_blue = ss.f_oneway(*blue_data)
+            f_green, p_green = ss.f_oneway(*green_data)
+            f_red, p_red = ss.f_oneway(*red_data)
+    
+            print(f'\nLocation: {site[0]}')
+            print(f'  Channel: Blue\n     F value: {f_blue:{.3}}\n     p value: {p_blue:{.3}}')
+            print(f'  Channel: Green\n     F value: {f_green:{.3}}\n     p value: {p_green:{.3}}')
+            print(f'  Channel: Red\n     F value: {f_red:{.3}}\n     p value: {p_red:{.3}}')
+    
+        except:
+            continue
