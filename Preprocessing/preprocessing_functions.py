@@ -1,12 +1,16 @@
 import tqdm
+import concurrent.futures
 import pandas as pd
 import numpy as np
+import PIL
+import tensorflow
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import cv2
 
 # Files to hist df
 def files_to_hist_df(path, files_list):
     '''
-    Reads a list of image files and creates a pandas DataFrame of the three-channel histograms.
+    Reads a list of image files and creates a pandas DataFrame of the histograms.
     '''
     # Instantiate arrays
     files = [path+file for file in files_list]
@@ -31,3 +35,15 @@ def files_to_hist_df(path, files_list):
     hist_df['image_name'] = image_names
 
     return hist_df
+
+def keras_pipeline(file):
+    img = load_img(file, target_size=(100,150))
+    img_array = img_to_array(img)
+    return img_array
+
+def files_to_array(path, files_list):
+    files = [path+file for file in files_list]
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        img_map = executor.map(keras_pipeline, files)
+    return img_map
+
