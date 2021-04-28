@@ -8,6 +8,7 @@ meta_df = pd.read_csv('../data/train.csv')
 
 files = [file+'.jpg' for file in meta_df.loc[:,'image_name']]
 img_map = preprocessing_functions.files_to_array(path, files)
+
 img_array = np.array([i for i in img_map])
 
 pickle_path = '../processed_data/img_array.pkl'

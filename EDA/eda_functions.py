@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from scipy import stats as ss
+import matplotlib.pyplot as plt
 import warnings
 from pandas.core.common import SettingWithCopyWarning
 
@@ -55,3 +56,13 @@ def anova_report(dataframe, grouping, comparison, aggregator):
             print(f'     F value: {f_hist:{.3}}\n     p value: {p_hist:{.3}}')
         except:
             continue
+
+# Compare histograms
+def compare_histograms(dataframes, feature):
+    df1, df2 = dataframes
+    fig, ax = plt.subplots(2,1)
+    ax1 = ax[0].hist(df1[f'hist_{feature}'])
+    ax[0].set_title(f'Melanoma {feature}')
+    ax2 = ax[1].hist(df2[f'hist_{feature}'])
+    ax[1].set_title(f'No melanoma {feature}')
+    plt.tight_layout()

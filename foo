@@ -1,0 +1,5 @@
+My company would regularly send out email blasts from MailChimp--sometimes to customers, and sometimes to vendors. In order to maintain an updated email list, we would occasionally scrape the inboxes of employees for customer lists. But first, we needed to remove non-valuable emails from those lists (things like "donotreply@customer.com").
+
+A few years before I started with my company, they hired someone to write a VBA script to run through the email list. In order to run this script, you needed to 1. Export the current MailChimp list, 2. Put the in Excel, 3. Paste the new emails into Excel, 4. Run the script, 5. Re-upload the new email list. Additionally, the script took hours to run, and would crash if fed too much data. Understandably, this painful process was avoided as much as possible.
+
+I decided to create a new script with Python and the MailChimp API. With a Google Sheet containing a list of keywords and a list of vendor names, the script performs all five steps in a matter of seconds, and displays a record of all emails unsubscribed from the customer list and subscribed to the vendor list. This allowed the email list to be updated far more regularly.

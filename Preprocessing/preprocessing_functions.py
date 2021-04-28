@@ -37,13 +37,14 @@ def files_to_hist_df(path, files_list):
     return hist_df
 
 def keras_pipeline(file):
-    img = load_img(file, target_size=(100,150))
+    TARGET_SIZE=(80,120)
+    img = load_img(file, target_size=TARGET_SIZE)
     img_array = img_to_array(img)
     return img_array
 
 def files_to_array(path, files_list):
     files = [path+file for file in files_list]
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        img_map = executor.map(keras_pipeline, files)
+        img_map = list(tqdm.tqdm(executor.map(keras_pipeline, files)))
     return img_map
 
