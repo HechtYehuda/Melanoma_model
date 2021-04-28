@@ -6,6 +6,7 @@ import PIL
 import tensorflow
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import cv2
+import pickle
 
 # Files to hist df
 def files_to_hist_df(path, files_list):
@@ -36,6 +37,7 @@ def files_to_hist_df(path, files_list):
 
     return hist_df
 
+# Files to array pipeline and function
 def keras_pipeline(file):
     TARGET_SIZE=(80,120)
     img = load_img(file, target_size=TARGET_SIZE)
@@ -47,4 +49,44 @@ def files_to_array(path, files_list):
     with concurrent.futures.ProcessPoolExecutor() as executor:
         img_map = list(tqdm.tqdm(executor.map(keras_pipeline, files)))
     return img_map
+
+# Metadata preprocessing
+def preprocess_meta(data):
+    RAW_PATH = f'../data/{data}.csv'
+    PROCESSED_PATH = f'../processed_data/{data}.csv'
+    df = pd.read_csv(RAW_PATH)
+    df.loc[df['age_approx'].isnull(), 'age_approx'] = 45.0
+    df.loc[df['sex'].isnull(), 'sex'] = 'Unknown'
+    df.loc[df['anatom_site_general_challenge'].isnull(), 'anatom_site_general_challenge'] = 'torso'
+    
+    patients = pd.get_dummies(df['patient_id'])
+    sex = pd.get_dummies(df['sex'])
+    location = pd.get_dummies(df['anatom_site_general_challenge'])
+    if 'target' in df.columns:
+        df = pd.concat([df['target'], patients, sex, location], axis=1)
+    else:
+        df = pd.concat([patients, sex, location], axis=1) 
+    df.to_csv(PROCESSED_PATH)
+    
+# Transforms images to pickled data
+def img_to_pickle(data):
+    path = f'../data/jpeg/{data}/'
+    files_df = pd.read_csv(f'../data/{data}.csv')
+    
+    files = [file+'.jpg' for file in files_df.loc[:,'image_name']]
+    img_map = files_to_array(path, files)
+    
+    img_array = np.array([i for i in img_map])
+    
+    pickle_path = f'../processed_data/{data}_img_array.pkl'
+    with open(pickle_path, 'wb') as file:
+        pickle.dump(img_array, file)
+    
+    with open(pickle_path, 'rb') as file:
+        test = pickle.load(file)
+    
+    if np.array_equal(img_array, test):
+        print('Pickling successful.')
+    else:
+        print('Pickling failed.')
 
