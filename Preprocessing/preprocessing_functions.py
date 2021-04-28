@@ -62,10 +62,7 @@ def preprocess_meta(data):
     patients = pd.get_dummies(df['patient_id'])
     sex = pd.get_dummies(df['sex'])
     location = pd.get_dummies(df['anatom_site_general_challenge'])
-    if 'target' in df.columns:
-        df = pd.concat([df['target'], patients, sex, location], axis=1)
-    else:
-        df = pd.concat([patients, sex, location], axis=1) 
+    df = pd.concat([patients, sex, location], axis=1)
     df.to_csv(PROCESSED_PATH)
     
 # Transforms images to pickled data
