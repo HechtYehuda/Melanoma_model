@@ -59,11 +59,12 @@ def preprocess_meta(data):
     df.loc[df['sex'].isnull(), 'sex'] = 'Unknown'
     df.loc[df['anatom_site_general_challenge'].isnull(), 'anatom_site_general_challenge'] = 'torso'
     
-    patients = pd.get_dummies(df['patient_id'])
     sex = pd.get_dummies(df['sex'])
     location = pd.get_dummies(df['anatom_site_general_challenge'])
-    df = pd.concat([patients, sex, location], axis=1)
-    df.to_csv(PROCESSED_PATH)
+    new_df = pd.concat([df['age_approx'], sex, location], axis=1)
+    if data == 'train':
+        new_df = pd.concat([new_df, df['target']], axis=1)
+    new_df.to_csv(PROCESSED_PATH)
     
 # Transforms images to pickled data
 def img_to_pickle(data):
