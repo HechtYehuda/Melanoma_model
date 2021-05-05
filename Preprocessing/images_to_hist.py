@@ -3,7 +3,7 @@ import test
 import pandas as pd
 import preprocessing_functions
 
-path = '../data/jpeg/train/'
+path = '../processed_data/jpeg/train/'
 files = [image for image in os.listdir(path)]
 
 # Combine histogram and metadata

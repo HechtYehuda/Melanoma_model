@@ -1,3 +1,4 @@
+import os
 import tqdm
 import concurrent.futures
 import pandas as pd
@@ -68,7 +69,7 @@ def preprocess_meta(data):
     
 # Transforms images to pickled data
 def img_to_pickle(data):
-    path = f'../data/jpeg/{data}/'
+    path = f'../processed_data/jpeg/{data}/'
     files_df = pd.read_csv(f'../data/{data}.csv')
     
     files = [file+'.jpg' for file in files_df.loc[:,'image_name']]
@@ -87,4 +88,16 @@ def img_to_pickle(data):
         print('Pickling successful.')
     else:
         print('Pickling failed.')
+
+# Denoising functions
+def denoise_single_image(img_path):
+    img = cv2.imread(f'../data/jpeg/{img_path}')
+    dst = cv2.fastNlMeansDenoising(img, 10,10,7,21)
+    cv2.imwrite(f'../processed_data/jpeg/{img_path}', dst)
+    print(f'{img_path} denoised.')
+
+def denoise(data):
+    img_list = os.listdir(f'../data/jpeg/{data}')
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        tqdm.tqdm(executor.map(denoise_single_image, (f'{data}/{img_path}' for img_path in img_list)))
 
