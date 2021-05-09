@@ -53,7 +53,7 @@ def files_to_array(path, files_list):
 
 # Metadata preprocessing
 def preprocess_meta(data):
-    if data == 'augmented':
+        if data == 'augmented':
         RAW_PATH = f'../processed_data/raw_augmented_metadata.csv'
     else:
         RAW_PATH = f'../data/{data}.csv'
