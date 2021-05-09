@@ -53,7 +53,10 @@ def files_to_array(path, files_list):
 
 # Metadata preprocessing
 def preprocess_meta(data):
-    RAW_PATH = f'../data/{data}.csv'
+    if data == 'augmented':
+        RAW_PATH = f'../processed_data/raw_augmented_metadata.csv'
+    else:
+        RAW_PATH = f'../data/{data}.csv'
     PROCESSED_PATH = f'../processed_data/{data}.csv'
     df = pd.read_csv(RAW_PATH)
     df.loc[df['age_approx'].isnull(), 'age_approx'] = 45.0
@@ -156,7 +159,7 @@ def rotate_melanoma_images(rotation):
         executor.map(rotation_pipeline, image_paths, args)
     
     # Add metadata to csv
-    if 'augmented_metadata.csv' in os.listdir('../processed_data/'):
-        augmented_csv = pd.read_csv('../processed_data/augmented_metadata.csv', index_col='Unnamed: 0')
+    if 'raw_augmented_metadata.csv' in os.listdir('../processed_data/'):
+        augmented_csv = pd.read_csv('../processed_data/raw_augmented_metadata.csv', index_col='Unnamed: 0')
         augmentation_df = pd.concat([augmented_csv, augmentation_df], axis=0)
-    augmentation_df.to_csv('../processed_data/augmented_metadata.csv')
+    augmentation_df.to_csv('../processed_data/raw_augmented_metadata.csv')
