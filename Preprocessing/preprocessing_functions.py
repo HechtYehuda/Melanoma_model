@@ -68,8 +68,12 @@ def preprocess_meta(data):
     new_df.to_csv(PROCESSED_PATH)
     
 # Transforms images to pickled data
-def img_to_pickle(data):
-    path = f'../processed_data/jpeg/{data}/'
+def img_to_pickle(data, processed):
+    if processed:
+        processed_bool = 'processed_'
+    else:
+        processed_bool = ''
+    path = f'../{processed_bool}data/jpeg/{data}/'
     files_df = pd.read_csv(f'../data/{data}.csv')
     
     files = [file+'.jpg' for file in files_df.loc[:,'image_name']]
@@ -77,7 +81,7 @@ def img_to_pickle(data):
     
     img_array = np.array([i for i in img_map])
     
-    pickle_path = f'../processed_data/{data}_img_array.pkl'
+    pickle_path = f'../processed_data/{processed_bool}{data}_img_array.pkl'
     with open(pickle_path, 'wb') as file:
         pickle.dump(img_array, file)
     
@@ -91,13 +95,68 @@ def img_to_pickle(data):
 
 # Denoising functions
 def denoise_single_image(img_path):
-    img = cv2.imread(f'../data/jpeg/{img_path}')
-    dst = cv2.fastNlMeansDenoising(img, 10,10,7,21)
-    cv2.imwrite(f'../processed_data/jpeg/{img_path}', dst)
-    print(f'{img_path} denoised.')
+    img_name = img_path.split('/')[1]
+    location = img_path.split('/')[0]
+    denoised_images = os.listdir(f'../processed_data/jpeg/{location}')
+    if img_name in denoised_images:
+        print(f'{img_path} already denoised.')
+    else:
+        img = cv2.UMat(cv2.imread(f'../data/jpeg/{img_path}'))
+        dst = cv2.fastNlMeansDenoising(img, 10,10,7,21)
+        cv2.imwrite(f'../processed_data/jpeg/{img_path}', dst)
+        print(f'{img_path} denoised.')
 
 def denoise(data):
     img_list = os.listdir(f'../data/jpeg/{data}')
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        tqdm.tqdm(executor.map(denoise_single_image, (f'{data}/{img_path}' for img_path in img_list)))
+        executor.map(denoise_single_image, (f'{data}/{img_path}' for img_path in img_list))
 
+# Image rotation functions
+def rotation_pipeline(img, rotation):
+    
+    # Rotation options
+    rotation_options = {
+        '90':cv2.ROTATE_90_CLOCKWISE,
+        '180':cv2.ROTATE_180,
+        '270':cv2.ROTATE_90_COUNTERCLOCKWISE
+    }
+    
+    # Rotate single image
+    img_name = img.split('/')[-1]
+    read_image = cv2.imread(img)
+    rotated_image = cv2.rotate(read_image, rotation_options[rotation])
+    cv2.imwrite(f'../processed_data/jpeg/augmented/{rotation}_degree_{img_name}', rotated_image)
+    print(f'{img_name} rotated {rotation} degrees.')
+
+def rotate_melanoma_images(rotation):
+    '''
+    Options for `rotation` are '90', '180', and '270'.
+    '''
+    
+    # Rotation check
+    if rotation not in ['90','180','270']:
+        print('Please use 90, 180, or 270 as a rotation arg.')
+        return
+    
+    # Read in metadata
+    PATH = '../data/jpeg/train/'
+    df = pd.read_csv('../data/train.csv')
+    augmentation_df = df[df['target'] == 1]
+        
+    # Obtain image names
+    melanoma_names = augmentation_df['image_name'].values
+    image_paths = PATH + melanoma_names + '.jpg'
+
+        # Create new metadata
+    augmentation_df['image_name'] = augmentation_df['image_name'].map(lambda x: f'{rotation}_degree_'+x)
+ 
+    # Multithread rotations
+    args = [rotation for image in image_paths]
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        executor.map(rotation_pipeline, image_paths, args)
+    
+    # Add metadata to csv
+    if 'augmented_metadata.csv' in os.listdir('../processed_data/'):
+        augmented_csv = pd.read_csv('../processed_data/augmented_metadata.csv', index_col='Unnamed: 0')
+        augmentation_df = pd.concat([augmented_csv, augmentation_df], axis=0)
+    augmentation_df.to_csv('../processed_data/augmented_metadata.csv')
