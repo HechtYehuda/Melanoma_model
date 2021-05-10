@@ -53,7 +53,7 @@ def files_to_array(path, files_list):
 
 # Metadata preprocessing
 def preprocess_meta(data):
-        if data == 'augmented':
+    if data == 'augmented':
         RAW_PATH = f'../processed_data/raw_augmented_metadata.csv'
     else:
         RAW_PATH = f'../data/{data}.csv'
@@ -66,7 +66,7 @@ def preprocess_meta(data):
     sex = pd.get_dummies(df['sex'])
     location = pd.get_dummies(df['anatom_site_general_challenge'])
     new_df = pd.concat([df['age_approx'], sex, location], axis=1)
-    if data == 'train':
+    if data in ['train', 'augmented']:
         new_df = pd.concat([new_df, df['target']], axis=1)
     new_df.to_csv(PROCESSED_PATH)
     
@@ -77,7 +77,10 @@ def img_to_pickle(data, processed):
     else:
         processed_bool = ''
     path = f'../{processed_bool}data/jpeg/{data}/'
-    files_df = pd.read_csv(f'../data/{data}.csv')
+    if data == 'augmented':
+        files_df = pd.read_csv(f'../processed_data/raw_augmented_metadata.csv')
+    else:
+        files_df = pd.read_csv(f'../data/{data}.csv')
     
     files = [file+'.jpg' for file in files_df.loc[:,'image_name']]
     img_map = files_to_array(path, files)
