@@ -40,10 +40,5 @@ Model 5 implemented full-scale augmentation. Using the [Keras ImageDataGenerator
 The following table provides a graphical representation of the F1 scores of the models:
 ![F1 scores](f1_scores.png)
 
-### Epoch tuning
-After concluding that Model 5 performed most successfully, I ran Model 5 for 100 epochs and printed the results:<br/>
-![Epoch tuning](model_5_epoch_tuning.png)
-
-There is a clear trend toward overfitting; however, at Epoch 16, the Training AUC is 0.90 and the Test AUC is 0.86. This is acceptably close, and the final model has been trained with 16 epochs.
-
 ## Conclusion
+While the general trend has been toward improvement in overall weighted F1 scores, a more important metric for business solutions is the minority class F1 score (the 1-class F1 score). Since the models are scoring poorly on those metrics, there is still much work to do.
